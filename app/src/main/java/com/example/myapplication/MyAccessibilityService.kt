@@ -20,7 +20,6 @@ class MyAccessibilityService : AccessibilityService() {
         val rootNodeInfo: AccessibilityNodeInfoCompat = AccessibilityNodeInfoCompat.wrap(getRootInActiveWindow())
 
         if(rootNodeInfo != null){
-
             if(packageName == "com.whatsapp"){
                 var messageNodeList : List<AccessibilityNodeInfoCompat> = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry")
                 if(messageNodeList == null || messageNodeList.isEmpty()){
@@ -28,7 +27,7 @@ class MyAccessibilityService : AccessibilityService() {
                 }
 
                 var messagefield : AccessibilityNodeInfoCompat =messageNodeList[0];
-                if(messagefield == null || messagefield.text.length == 0){
+                if(messagefield == null || messagefield.text.isEmpty()){
                     return;
                 }
 
