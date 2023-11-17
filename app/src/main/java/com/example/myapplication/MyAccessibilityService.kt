@@ -2,12 +2,10 @@ package com.example.myapplication
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
-import android.content.pm.PackageManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import kotlin.concurrent.thread
 
 
 class MyAccessibilityService : AccessibilityService() {
@@ -18,30 +16,39 @@ class MyAccessibilityService : AccessibilityService() {
         Log.e(TAG, "onAccessibilityEvent: ${p0!!.packageName.toString()}")
         var packageName = p0!!.packageName.toString();
         var classNAme = p0!!.className;
-        Log.e(TAG, "Action: ${p0.text[0]}")
+
         val rootNodeInfo: AccessibilityNodeInfoCompat = AccessibilityNodeInfoCompat.wrap(getRootInActiveWindow())
 
-        var messageNodeList : List<AccessibilityNodeInfoCompat> = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry")
-        if(messageNodeList == null || messageNodeList.isEmpty()){
-            return;
+        if(rootNodeInfo != null){
+
+            if(packageName == "com.whatsapp"){
+                var messageNodeList : List<AccessibilityNodeInfoCompat> = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/entry")
+                if(messageNodeList == null || messageNodeList.isEmpty()){
+                    return;
+                }
+
+                var messagefield : AccessibilityNodeInfoCompat =messageNodeList[0];
+                if(messagefield == null || messagefield.text.length == 0){
+                    return;
+                }
+
+                var sendMessageNodeList : List<AccessibilityNodeInfoCompat> = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/send")
+                if(sendMessageNodeList == null || sendMessageNodeList.isEmpty()){
+                    return;
+                }
+
+                var sendMessage : AccessibilityNodeInfoCompat = sendMessageNodeList[0]
+                if(!sendMessage.isVisibleToUser){
+                    return;
+                }
+
+                sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            }
+
+
         }
 
-        var messagefield : AccessibilityNodeInfoCompat =messageNodeList[0];
-        if(messagefield == null || messagefield.text.length == 0){
-            return;
-        }
 
-        var sendMessageNodeList : List<AccessibilityNodeInfoCompat> = rootNodeInfo.findAccessibilityNodeInfosByViewId("com.whatsapp:id/send")
-        if(sendMessageNodeList == null || sendMessageNodeList.isEmpty()){
-            return;
-        }
-
-        var sendMessage : AccessibilityNodeInfoCompat = sendMessageNodeList[0]
-        if(!sendMessage.isVisibleToUser){
-            return;
-        }
-
-        sendMessage.performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
 
     }
